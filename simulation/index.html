@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Leak Tracking System Call Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Memory Leak Tracking System Call Simulation</h1>
+            <p>Interactive simulation of kernel-level memory tracking with syscall interface</p>
+        </header>
+
+        <div class="system-overview">
+            <div class="kernel-space">
+                <h2>Kernel Space</h2>
+                <div class="hash-table-container">
+                    <h3>Process Hash Table</h3>
+                    <div id="hashTable" class="hash-table"></div>
+                </div>
+                <div class="kprobe-status">
+                    <h3>KProbe Status</h3>
+                    <div class="status-indicator">
+                        <span class="status-dot active"></span>
+                        <span>do_exit handler: Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-space">
+                <h2>User Space</h2>
+                <div class="process-controls">
+                    <h3>Process Management</h3>
+                    <div class="control-group">
+                        <input type="number" id="newPid" placeholder="PID" min="1" value="1001">
+                        <button onclick="createProcess()">Create Process</button>
+                        <button onclick="killProcess()" id="killBtn" disabled>Kill Selected Process</button>
+                    </div>
+                    <div class="process-list" id="processList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="syscall-interface">
+            <h2>System Call Interface</h2>
+            <div class="syscall-controls">
+                <div class="syscall-form">
+                    <div class="form-row">
+                        <label>PID:</label>
+                        <select id="syscallPid">
+                            <option value="">Select Process</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Operation:</label>
+                        <select id="operation">
+                            <option value="0">Start Tracking (0)</option>
+                            <option value="1">Track Allocation (1)</option>
+                            <option value="2">Track Deallocation (2)</option>
+                        </select>
+                    </div>
+                    <div class="form-row" id="addressRow">
+                        <label>Address:</label>
+                        <input type="text" id="address" placeholder="0x7fff12345678">
+                    </div>
+                    <div class="form-row" id="sizeRow">
+                        <label>Size:</label>
+                        <input type="number" id="size" placeholder="1024" min="1">
+                    </div>
+                    <button onclick="executeSyscall()" id="syscallBtn">Execute System Call</button>
+                </div>
+
+                <div class="syscall-result">
+                    <h3>System Call Result</h3>
+                    <div id="syscallResult" class="result-display">
+                        <span class="result-code">Ready</span>
+                        <span class="result-message">Select operation and execute</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="memory-visualization">
+            <div class="allocation-tracker">
+                <h2>Memory Allocation Tracking</h2>
+                <div class="process-memory-view" id="processMemoryView">
+                    <p>Select a process to view memory allocations</p>
+                </div>
+            </div>
+
+            <div class="leak-detector">
+                <h2>Memory Leak Detection</h2>
+                <div class="leak-summary" id="leakSummary">
+                    <div class="leak-stat">
+                        <span class="stat-label">Active Processes:</span>
+                        <span id="activeProcesses">0</span>
+                    </div>
+                    <div class="leak-stat">
+                        <span class="stat-label">Total Allocations:</span>
+                        <span id="totalAllocations">0</span>
+                    </div>
+                    <div class="leak-stat">
+                        <span class="stat-label">Leaked Memory:</span>
+                        <span id="leakedMemory">0 bytes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="simulation-controls">
+            <h2>Simulation Controls</h2>
+            <div class="demo-buttons">
+                <button onclick="runDemoScenario()" class="demo-btn">Run Demo Scenario</button>
+                <button onclick="simulateMemoryLeak()" class="demo-btn">Simulate Memory Leak</button>
+                <button onclick="resetSimulation()" class="reset-btn">Reset Simulation</button>
+            </div>
+            <div class="auto-demo">
+                <label>
+                    <input type="checkbox" id="autoDemo"> Auto-run demo scenarios
+                </label>
+            </div>
+        </div>
+
+        <div class="log-section">
+            <h2>System Log (/var/log/user_memory_leaks.log)</h2>
+            <div class="log-controls">
+                <button onclick="clearLog()">Clear Log</button>
+                <button onclick="downloadLog()">Download Log</button>
+            </div>
+            <div id="systemLog" class="log-display"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
